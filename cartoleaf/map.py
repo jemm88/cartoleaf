@@ -2,10 +2,10 @@ import json
 from pathlib import Path
 from jinja2 import Template
 
-from .marker import Marker
-from .polygon import Polygon
-from .geojson import GeoJson
-from .circle import Circle
+from .layers.marker import Marker
+from .layers.polygon import Polygon
+from .layers.geojson import GeoJson
+from .layers.circle import Circle
 
 HTML_DEPENDENCIES = """
 <link

@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any
 from uuid import uuid4
-from .settings import SUPPORTED_EVENTS, POLYGEO_DEFAULT_STYLE
+from ..settings import SUPPORTED_EVENTS, POLYGEO_DEFAULT_STYLE
 
 SUPPORTED_POLYGON_EVENTS = SUPPORTED_EVENTS
 
