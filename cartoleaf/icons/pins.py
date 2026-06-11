@@ -1,4 +1,4 @@
-from .icon import CustomIcon
+from .base import CustomIcon
 
 
 def custom_pin_icon(

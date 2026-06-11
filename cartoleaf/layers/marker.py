@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any
 from uuid import uuid4
-from ..icon import CustomIcon
+from ..icons.base import CustomIcon
 from ..settings import SUPPORTED_EVENTS
 
 SUPPORTED_MARKER_EVENTS = SUPPORTED_EVENTS
