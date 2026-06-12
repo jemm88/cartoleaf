@@ -18,10 +18,12 @@ class Map:
         self,
         center: tuple[float, float] = (1.3521, 103.8198),
         zoom: int = 12,
+        max_zoom: int = 19,
         map_id: str = "cartoleaf-map",
         height: str = "500px",
         fit_bounds: bool = False,
         fit_bounds_padding: tuple[int, int] = (30, 30),
+        allow_multiple_popups: bool = False,
         
         tile_url: str = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attribution: str = '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
@@ -31,13 +33,17 @@ class Map:
     ):
         self.center = center
         self.zoom = zoom
+        self.max_zoom = max_zoom
         self.map_id = map_id
         self.height = height
         self.fit_bounds = fit_bounds
         self.fit_bounds_padding = fit_bounds_padding
+        self.allow_multiple_popups = allow_multiple_popups
+        
         self.tile_url = tile_url
         self.attribution = attribution
         self.include_bootstrap_icons = include_bootstrap_icons
+        
 
         self.markers: list[Marker] = []
         self.polygons: list[Polygon] = []
@@ -69,6 +75,27 @@ class Map:
     def add_geojsons(self, geojson_layers: list[GeoJson]) -> None:
         self.geojson_layers.extend(geojson_layers)
 
+    @property
+    def default_popup_options_json(self) -> str:
+        options = {}
+
+        if self.allow_multiple_popups:
+            options.update({
+                "autoClose": False,
+                "closeOnClick": False,
+            })
+
+        return json.dumps(options)
+
+
+    @property
+    def map_options_json(self) -> str:
+        options = {}
+
+        if self.allow_multiple_popups:
+            options["closePopupOnClick"] = False
+
+        return json.dumps(options)
 
 
 
@@ -120,6 +147,7 @@ class Map:
                 "popup_json": json.dumps(polygon.popup),
                 "popup_html": polygon.popup_html,
                 "popup_html_json": json.dumps(polygon.popup_html),
+                "popup_options_json": json.dumps(polygon.popup_options),
                 "popup_open_on_hover": polygon.popup_open_on_hover,
                 "popup_close_on_hoverout": polygon.popup_close_on_hoverout,
                 "data_json": json.dumps(polygon.data),
@@ -144,6 +172,7 @@ class Map:
                 "popup_json": json.dumps(circle.popup),
                 "popup_html": circle.popup_html,
                 "popup_html_json": json.dumps(circle.popup_html),
+                "popup_options_json": json.dumps(circle.popup_options),
                 "popup_open_on_hover": circle.popup_open_on_hover,
                 "popup_close_on_hoverout": circle.popup_close_on_hoverout,
                 "data_json": json.dumps(circle.data),
@@ -180,6 +209,9 @@ class Map:
             "center_lat": self.center[0],
             "center_lng": self.center[1],
             "zoom": self.zoom,
+            "max_zoom": self.max_zoom,
+            "default_popup_options_json":self.default_popup_options_json,
+            "map_options_json":self.map_options_json,
             "tile_url": self.tile_url,
             "attribution": json.dumps(self.attribution),
             "markers": prepared_markers,

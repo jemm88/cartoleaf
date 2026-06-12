@@ -11,10 +11,10 @@ class Polygon:
     coordinates: list[tuple[float, float]]
     popup: str | None = None
     popup_html: str | None = None
-
+    popup_options: dict[str, Any] = field(default_factory=dict) #currently unused in templating, reserved for future use
     popup_open_on_hover: bool = False
     popup_close_on_hoverout: bool = False
-    
+
     data: dict[str, Any] = field(default_factory=dict)
     events: dict[str, str] = field(default_factory=dict)
     polygon_id: str = field(default_factory=lambda: f"polygon-{uuid4().hex}")

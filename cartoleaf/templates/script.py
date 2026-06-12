@@ -1,10 +1,11 @@
 HTML_SCRIPT = """
 <script>
 (function () {
-  const map = L.map("{{ map_id }}").setView([{{ center_lat }}, {{ center_lng }}], {{ zoom }});
+  const map = L.map("{{ map_id }}", {{ map_options_json | safe }}).setView([{{ center_lat }}, {{ center_lng }}], {{ zoom }});
+  const cartoleafDefaultPopupOptions = {{ default_popup_options_json | safe }};
 
   L.tileLayer("{{ tile_url }}", {
-    maxZoom: 19,
+    maxZoom: {{ max_zoom }},
     attribution: {{ attribution | safe }}
   }).addTo(map);
 
@@ -42,12 +43,18 @@ window.cartoleaf.geojsonLayers = window.cartoleaf.geojsonLayers || {};
     {% if marker.popup_html %}
     {{ marker.var_name }}.bindPopup(
       {{ marker.popup_html_json | safe }},
-      {{ marker.popup_options_json | safe }}
+  {
+    ...cartoleafDefaultPopupOptions,
+    ...{{ marker.popup_options_json | safe }}
+  }
     );
     {% elif marker.popup %}
     {{ marker.var_name }}.bindPopup(
       {{ marker.popup_json | safe }},
-      {{ marker.popup_options_json | safe }}
+  {
+    ...cartoleafDefaultPopupOptions,
+    ...{{ marker.popup_options_json | safe }}
+  }
     );
     {% endif %}
 
@@ -84,12 +91,18 @@ window.cartoleaf.geojsonLayers = window.cartoleaf.geojsonLayers || {};
     {% if polygon.popup_html %}
     {{ polygon.var_name }}.bindPopup(
       {{ polygon.popup_html_json | safe }},
-      {{ polygon.popup_options_json | safe }}
+  {
+    ...cartoleafDefaultPopupOptions,
+    ...{{ polygon.popup_options_json | safe }}
+  }
     );
     {% elif polygon.popup %}
     {{ polygon.var_name }}.bindPopup(
       {{ polygon.popup_json | safe }},
-      {{ polygon.popup_options_json | safe }}
+  {
+    ...cartoleafDefaultPopupOptions,
+    ...{{ polygon.popup_options_json | safe }}
+  }
     );
     {% endif %}
 
@@ -120,7 +133,12 @@ const {{ geojson.var_name }} = L.geoJSON(
 
       {% if geojson.popup_field %}
       if (feature.properties && feature.properties[{{ geojson.popup_field_json | safe }}]) {
-        layer.bindPopup(String(feature.properties[{{ geojson.popup_field_json | safe }}]));
+        layer.bindPopup(
+          String(feature.properties[{{ geojson.popup_field_json | safe }}]),
+          {
+            ...cartoleafDefaultPopupOptions
+          }
+        );
       }
       {% endif %}
 
@@ -163,12 +181,18 @@ window.cartoleaf.circles[{{ circle.circle_id_json | safe }}] = {{ circle.var_nam
     {% if circle.popup_html %}
     {{ circle.var_name }}.bindPopup(
       {{ circle.popup_html_json | safe }},
-      {{ circle.popup_options_json | safe }}
+  {
+    ...cartoleafDefaultPopupOptions,
+    ...{{ circle.popup_options_json | safe }}
+  }
     );
     {% elif circle.popup %}
     {{ circle.var_name }}.bindPopup(
       {{ circle.popup_json | safe }},
-      {{ circle.popup_options_json | safe }}
+  {
+    ...cartoleafDefaultPopupOptions,
+    ...{{ circle.popup_options_json | safe }}
+  }
     );
     {% endif %}
 

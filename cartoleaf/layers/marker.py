@@ -13,7 +13,7 @@ class Marker:
     lng: float
     popup: str | None = None
     popup_html: str | None = None
-    popup_options: dict[str, Any] = field(default_factory=dict) #currently unused, reserved for future use
+    popup_options: dict[str, Any] = field(default_factory=dict) #currently unused in templating, reserved for future use
 
     popup_open_on_hover: bool = False
     popup_close_on_hoverout: bool = False
