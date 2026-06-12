@@ -17,7 +17,7 @@ marker = Marker(
     },
     events={
         "click": "marker:clicked",
-        "mouseover": "marker:hovered",
+        "hoverin": "marker:hovered",
     },
 )
 

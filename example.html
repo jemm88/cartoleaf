@@ -10,6 +10,7 @@
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
             </head>
             <body>
             
@@ -25,35 +26,136 @@
     attribution: "&copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors"
   }).addTo(map);
 
+// Initialize global storage for markers, polygons, and geojson layers
+window.cartoleaf = window.cartoleaf || {};
+window.cartoleaf.markers = window.cartoleaf.markers || {};
+window.cartoleaf.circles = window.cartoleaf.circles || {};
+window.cartoleaf.polygons = window.cartoleaf.polygons || {};
+window.cartoleaf.geojsonLayers = window.cartoleaf.geojsonLayers || {};
+
+//Marker rendering
+  
+
   
   const marker1 = L.marker([1.3, 103.8]).addTo(map);
+  
 
+  window.cartoleaf.markers["marker-9b28a7563e6645258d95fdf4e61ba087"] = marker1;
+
+//Marker popup binding
   
   marker1.bindPopup("Property A");
   
 
   
-  marker1.on("click", function () {
-    document.dispatchEvent(new CustomEvent("marker:clicked", {
-      detail: {"id": 1, "name": "Property A", "price": 1500000}
-    }));
-  });
+
+//Polygon rendering
   
-  marker1.on("mouseover", function () {
-    document.dispatchEvent(new CustomEvent("marker:hovered", {
-      detail: {"id": 1, "name": "Property A", "price": 1500000}
-    }));
-  });
+
+  //GeoJSON rendering
   
+
+  
+  // Circle rendering
+
+
+
+// Fit bounds if enabled
+
+
+})();
+</script>
+            
+<script>
+(function () {
+  const eventAliases = {
+    click: "click",
+    hoverin: "mouseover",
+    hoverout: "mouseout"
+  };
+
+  // Utility function to emit custom events with consistent payload structure
+  function emitCartoleafEvent(eventName, objectId, eventType, data) {
+    document.dispatchEvent(new CustomEvent(eventName, {
+      detail: {
+        object_id: objectId,
+        event_type: eventType,
+        data: data
+      }
+    }));
+  }
+
+  // Marker events
+  
+  
+  const markerObj1 = window.cartoleaf.markers["marker-9b28a7563e6645258d95fdf4e61ba087"];
+
+  
+  if (eventAliases["click"]) {
+    markerObj1.on(
+      eventAliases["click"],
+      function (e) {
+        
+
+        
+
+        emitCartoleafEvent(
+          "marker:clicked",
+          "marker-9b28a7563e6645258d95fdf4e61ba087",
+          "click",
+          {
+            type: "marker",
+            id: "marker-9b28a7563e6645258d95fdf4e61ba087",
+            lat: 1.3,
+            lng: 103.8,
+            data: {"id": 1, "name": "Property A", "price": 1500000}
+          }
+        );
+      }
+    );
+  }
+  
+  if (eventAliases["hoverin"]) {
+    markerObj1.on(
+      eventAliases["hoverin"],
+      function (e) {
+        
+        this.openPopup();
+        
+
+        
+
+        emitCartoleafEvent(
+          "marker:hovered",
+          "marker-9b28a7563e6645258d95fdf4e61ba087",
+          "hoverin",
+          {
+            type: "marker",
+            id: "marker-9b28a7563e6645258d95fdf4e61ba087",
+            lat: 1.3,
+            lng: 103.8,
+            data: {"id": 1, "name": "Property A", "price": 1500000}
+          }
+        );
+      }
+    );
+  }
+  
+  
+
+
+  // Polygon events
+  
+
+
+  // Circle events
+    
+
+
+  // GeoJSON events
   
 })();
 </script>
-
-            <script>
-                document.addEventListener("marker:clicked", function (event) {
-                console.log("Marker clicked:", event.detail);
-                });
-            </script>
             </body>
             </html>
             
