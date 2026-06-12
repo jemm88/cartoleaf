@@ -10,6 +10,11 @@ SUPPORTED_POLYGON_EVENTS = SUPPORTED_EVENTS
 class Polygon:
     coordinates: list[tuple[float, float]]
     popup: str | None = None
+    popup_html: str | None = None
+
+    popup_open_on_hover: bool = False
+    popup_close_on_hoverout: bool = False
+    
     data: dict[str, Any] = field(default_factory=dict)
     events: dict[str, str] = field(default_factory=dict)
     polygon_id: str = field(default_factory=lambda: f"polygon-{uuid4().hex}")
@@ -26,6 +31,12 @@ class Polygon:
 
             if not -180 <= lng <= 180:
                 raise ValueError("Polygon lng values must be between -180 and 180.")
+
+        if self.popup is not None and self.popup_html is not None:
+            raise ValueError("Use either popup or popup_html, not both.")
+
+        if self.popup_html is not None and not isinstance(self.popup_html, str):
+            raise TypeError("popup_html must be a string.")
 
         invalid_events = set(self.events) - SUPPORTED_POLYGON_EVENTS
 

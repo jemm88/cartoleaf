@@ -28,13 +28,6 @@ HTML_EMISSION = """
     markerObj{{ marker_index }}.on(
       eventAliases[{{ event_name | tojson }}],
       function (e) {
-        {% if event_name == "hoverin" %}
-        this.openPopup();
-        {% endif %}
-
-        {% if event_name == "hoverout" %}
-        this.closePopup();
-        {% endif %}
 
         emitCartoleafEvent(
           {{ emitted_event | tojson }},
@@ -65,13 +58,6 @@ HTML_EMISSION = """
     polygonObj{{ polygon_index }}.on(
       eventAliases[{{ event_name | tojson }}],
       function (e) {
-        {% if event_name == "hoverin" %}
-        this.openPopup();
-        {% endif %}
-
-        {% if event_name == "hoverout" %}
-        this.closePopup();
-        {% endif %}
 
         emitCartoleafEvent(
           {{ emitted_event | tojson }},
@@ -101,13 +87,6 @@ HTML_EMISSION = """
     circleObj{{ circle_index }}.on(
         eventAliases[{{ event_name | tojson }}],
         function (e) {
-        {% if event_name == "hoverin" %}
-        this.openPopup();
-        {% endif %}
-
-        {% if event_name == "hoverout" %}
-        this.closePopup();
-        {% endif %}
 
         emitCartoleafEvent(
             {{ emitted_event | tojson }},

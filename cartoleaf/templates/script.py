@@ -38,12 +38,38 @@ window.cartoleaf.geojsonLayers = window.cartoleaf.geojsonLayers || {};
 
   window.cartoleaf.markers[{{ marker.marker_id_json | safe }}] = {{ marker.var_name }};
 
-//Marker popup binding
-  {% if marker.popup %}
-  {{ marker.var_name }}.bindPopup({{ marker.popup_json | safe }});
-  {% endif %}
+  //Marker popup binding
+    {% if marker.popup_html %}
+    {{ marker.var_name }}.bindPopup(
+      {{ marker.popup_html_json | safe }},
+      {{ marker.popup_options_json | safe }}
+    );
+    {% elif marker.popup %}
+    {{ marker.var_name }}.bindPopup(
+      {{ marker.popup_json | safe }},
+      {{ marker.popup_options_json | safe }}
+    );
+    {% endif %}
 
+  // Marker popup hover behavior
+    {% if marker.popup or marker.popup_html %}
+      {% if marker.popup_open_on_hover %}
+      {{ marker.var_name }}.on("mouseover", function () {
+        this.openPopup();
+      });
+      {% endif %}
+
+      {% if marker.popup_close_on_hoverout %}
+      {{ marker.var_name }}.on("mouseout", function () {
+        this.closePopup();
+      });
+      {% endif %}
+    {% endif %}
+
+
+  //Ending Marker rendering loop
   {% endfor %}
+  
 
 //Polygon rendering
   {% for polygon in polygons %}
@@ -54,31 +80,71 @@ window.cartoleaf.geojsonLayers = window.cartoleaf.geojsonLayers || {};
 
   window.cartoleaf.polygons[{{ polygon.polygon_id_json | safe }}] = {{ polygon.var_name }};
 
-  {% if polygon.popup %}
-  {{ polygon.var_name }}.bindPopup({{ polygon.popup_json | safe }});
-  {% endif %}
+  //Polygon popup binding
+    {% if polygon.popup_html %}
+    {{ polygon.var_name }}.bindPopup(
+      {{ polygon.popup_html_json | safe }},
+      {{ polygon.popup_options_json | safe }}
+    );
+    {% elif polygon.popup %}
+    {{ polygon.var_name }}.bindPopup(
+      {{ polygon.popup_json | safe }},
+      {{ polygon.popup_options_json | safe }}
+    );
+    {% endif %}
+
+  // polygon popup hover behavior
+    {% if polygon.popup or polygon.popup_html %}
+      {% if polygon.popup_open_on_hover %}
+      {{ polygon.var_name }}.on("mouseover", function () {
+        this.openPopup();
+      });
+      {% endif %}
+
+      {% if polygon.popup_close_on_hoverout %}
+      {{ polygon.var_name }}.on("mouseout", function () {
+        this.closePopup();
+      });
+      {% endif %}
+    {% endif %}
 
   {% endfor %}
 
-  //GeoJSON rendering
-  {% for geojson in geojson_layers %}
-  const {{ geojson.var_name }} = L.geoJSON(
-    {{ geojson.data_json | safe }},
-    {
-      style: {{ geojson.style_json | safe }},
-      onEachFeature: function (feature, layer) {
-        {% if geojson.popup_field %}
-        if (feature.properties && feature.properties[{{ geojson.popup_field_json | safe }}]) {
-          layer.bindPopup(String(feature.properties[{{ geojson.popup_field_json | safe }}]));
-        }
-        {% endif %}
+//GeoJSON rendering
+{% for geojson in geojson_layers %}
+const {{ geojson.var_name }} = L.geoJSON(
+  {{ geojson.data_json | safe }},
+  {
+    style: {{ geojson.style_json | safe }},
+    onEachFeature: function (feature, layer) {
+
+      {% if geojson.popup_field %}
+      if (feature.properties && feature.properties[{{ geojson.popup_field_json | safe }}]) {
+        layer.bindPopup(String(feature.properties[{{ geojson.popup_field_json | safe }}]));
       }
+      {% endif %}
+
+      {% if geojson.popup_field %}
+        {% if geojson.popup_open_on_hover %}
+        layer.on("mouseover", function () {
+          this.openPopup();
+        });
+        {% endif %}
+
+        {% if geojson.popup_close_on_hoverout %}
+        layer.on("mouseout", function () {
+          this.closePopup();
+        });
+        {% endif %}
+      {% endif %}
+
     }
-  ).addTo(map);
+  }
+).addTo(map);
 
-  window.cartoleaf.geojsonLayers[{{ geojson.geojson_id_json | safe }}] = {{ geojson.var_name }};
+window.cartoleaf.geojsonLayers[{{ geojson.geojson_id_json | safe }}] = {{ geojson.var_name }};
 
-  {% endfor %}
+{% endfor %}
 
   
   // Circle rendering
@@ -93,9 +159,33 @@ const {{ circle.var_name }} = L.circle(
 
 window.cartoleaf.circles[{{ circle.circle_id_json | safe }}] = {{ circle.var_name }};
 
-{% if circle.popup %}
-{{ circle.var_name }}.bindPopup({{ circle.popup_json | safe }});
-{% endif %}
+  //circle popup binding
+    {% if circle.popup_html %}
+    {{ circle.var_name }}.bindPopup(
+      {{ circle.popup_html_json | safe }},
+      {{ circle.popup_options_json | safe }}
+    );
+    {% elif circle.popup %}
+    {{ circle.var_name }}.bindPopup(
+      {{ circle.popup_json | safe }},
+      {{ circle.popup_options_json | safe }}
+    );
+    {% endif %}
+
+  // circle popup hover behavior
+    {% if circle.popup or circle.popup_html %}
+      {% if circle.popup_open_on_hover %}
+      {{ circle.var_name }}.on("mouseover", function () {
+        this.openPopup();
+      });
+      {% endif %}
+
+      {% if circle.popup_close_on_hoverout %}
+      {{ circle.var_name }}.on("mouseout", function () {
+        this.closePopup();
+      });
+      {% endif %}
+    {% endif %}
 
 {% endfor %}
 
