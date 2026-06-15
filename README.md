@@ -162,7 +162,7 @@ from cartoleaf import Polygon
 
 m.add_polygon(
     Polygon(
-        points=[
+        coordinates=[
             (1.35, 103.81),
             (1.36, 103.82),
             (1.34, 103.83),
@@ -343,7 +343,7 @@ Layer styles are passed as dictionaries and mapped to Leaflet style options.
 
 ```python
 Polygon(
-    points=[
+    coordinates=[
         (1.35, 103.81),
         (1.36, 103.82),
         (1.34, 103.83),

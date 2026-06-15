@@ -15,6 +15,65 @@ from .templates.emission import HTML_EMISSION
 
 
 class Map:
+    """
+    Main CartoLeaf map object.
+
+    Map is the primary entry point for creating and rendering a CartoLeaf map.
+    It stores map configuration, manages layers such as markers, polygons,
+    circles, polylines, and GeoJSON layers, and renders the final Leaflet HTML.
+
+    Parameters
+    ----------
+    center : tuple[float, float], default=(1.3521, 103.8198)
+        Initial map center as a (lat, lng) tuple.
+
+    zoom : int, default=12
+        Initial map zoom level.
+
+    max_zoom : int, default=19
+        Maximum zoom level for the tile layer.
+
+    map_id : str, default="cartoleaf-map"
+        HTML element ID used for the map container.
+
+    height : str, default="500px"
+        CSS height of the map container.
+
+    fit_bounds : bool, default=False
+        Whether the map should automatically fit its bounds to added layers.
+
+    fit_bounds_padding : tuple[int, int], default=(30, 30)
+        Padding applied when fitting bounds, as (x, y) pixels.
+
+    allow_multiple_popups : bool, default=False
+        Whether multiple popups can remain open at the same time.
+
+    tile_url : str, default=OpenStreetMap tile URL
+        Leaflet tile URL template.
+
+    attribution : str, default=OpenStreetMap attribution
+        Attribution text shown on the map.
+
+    include_bootstrap_icons : bool, default=False
+        Whether to include Bootstrap Icons in the rendered dependencies.
+
+    Attributes
+    ----------
+    markers : list[Marker]
+        Markers added to the map.
+
+    polygons : list[Polygon]
+        Polygons added to the map.
+
+    geojson_layers : list[GeoJson]
+        GeoJSON layers added to the map.
+
+    circles : list[Circle]
+        Circles added to the map.
+
+    polylines : list[Polyline]
+        Polylines added to the map.
+    """
     def __init__(
         self,
         center: tuple[float, float] = (1.3521, 103.8198),
@@ -55,35 +114,30 @@ class Map:
 
     def add_marker(self, marker: Marker) -> None:
         self.markers.append(marker)
-        return marker
 
     def add_markers(self, markers: list[Marker]) -> None:
         self.markers.extend(markers)
 
     def add_polygon(self, polygon: Polygon) -> None:
         self.polygons.append(polygon)
-        return polygon
 
     def add_polygons(self, polygons: list[Polygon]) -> None:
         self.polygons.extend(polygons)
 
     def add_circle(self, circle: Circle) -> None:
         self.circles.append(circle)
-        return circle
 
     def add_circles(self, circles: list[Circle]) -> None:
         self.circles.extend(circles)
 
     def add_geojson(self, geojson: GeoJson) -> None:
         self.geojson_layers.append(geojson)
-        return geojson
 
     def add_geojsons(self, geojson_layers: list[GeoJson]) -> None:
         self.geojson_layers.extend(geojson_layers)
 
     def add_polyline(self, polyline: Polyline) -> None:
         self.polylines.append(polyline)
-        return polyline
     
     def add_polylines(self, polylines: list[Polyline]) -> None:
         self.polylines.extend(polylines)
@@ -297,21 +351,5 @@ class Map:
             </html>
             """
 
-    def save(self, path: str | Path) -> None:
-        html = f"""
-            <!DOCTYPE html>
-            <html>
-            <head>
-            <meta charset="utf-8">
-            <title>Cartoleaf Map</title>
-            {self.render_dependencies()}
-            </head>
-            <body>
-            {self.render_map()}
-
-            {self.render_script()}
-            {self.render_emission()}
-            </body>
-            </html>
-            """
-        Path(path).write_text(html, encoding="utf-8")
+    def save(self, path: str | Path, title: str = "CartoLeaf Map") -> None:
+        Path(path).write_text(self.render_full_html(title=title), encoding="utf-8")
