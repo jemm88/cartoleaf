@@ -9,6 +9,62 @@ SUPPORTED_MARKER_EVENTS = SUPPORTED_EVENTS
 
 @dataclass
 class Marker:
+    """
+    Represents a point marker on a CartoLeaf map.
+
+    Marker is used to place a point at a latitude and longitude coordinate.
+    It supports plain text popups, HTML popups, hover popup behavior, custom
+    browser events, custom metadata, and custom marker icons.
+
+    Parameters
+    ----------
+    lat : float
+        Latitude of the marker. Must be between -90 and 90.
+
+    lng : float
+        Longitude of the marker. Must be between -180 and 180.
+
+    popup : str | None, default=None
+        Plain text popup content shown when the marker is clicked.
+
+    popup_html : str | None, default=None
+        HTML popup content shown when the marker is clicked.
+        Use either popup or popup_html, not both.
+
+    popup_options : dict[str, Any], default={}
+        Reserved for future popup configuration support.
+
+    popup_open_on_hover : bool, default=False
+        Whether the popup should open when the cursor enters the marker.
+
+    popup_close_on_hoverout : bool, default=False
+        Whether the popup should close when the cursor leaves the marker.
+
+    data : dict[str, Any], default={}
+        Custom metadata attached to the marker. This is included in emitted
+        browser events.
+
+    events : dict[str, str], default={}
+        Browser events emitted by the marker. Event keys must be supported
+        CartoLeaf events such as click, hoverin, or hoverout.
+
+    marker_id : str, default=auto-generated
+        Unique ID for the marker. If not provided, one is automatically
+        generated.
+
+    icon : CustomIcon | None, default=None
+        Optional custom icon used to render the marker. If omitted, the
+        default Leaflet marker icon is used.
+
+    Raises
+    ------
+    ValueError
+        If lat, lng, popup configuration, or events are invalid.
+
+    TypeError
+        If popup_html, popup_options, or hover options are not the expected
+        types.
+    """
     lat: float
     lng: float
     popup: str | None = None

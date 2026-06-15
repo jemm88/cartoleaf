@@ -8,6 +8,52 @@ SUPPORTED_GEOJSON_EVENTS = SUPPORTED_EVENTS
 
 @dataclass
 class GeoJson:
+    """
+    Represents a GeoJSON layer on a CartoLeaf map.
+
+    GeoJson is used to render GeoJSON Feature or FeatureCollection data
+    as a Leaflet GeoJSON layer. It supports styling, property-based popups,
+    hover popup behavior, browser event emission, and custom metadata through
+    the underlying GeoJSON properties.
+
+    Parameters
+    ----------
+    data : dict[str, Any]
+        GeoJSON data to render. Must be a dictionary with type "Feature"
+        or "FeatureCollection".
+
+    popup_field : str | None, default=None
+        Name of the GeoJSON feature property to display as popup content.
+        If provided, each feature will use feature.properties[popup_field]
+        as its popup value.
+
+    popup_open_on_hover : bool, default=False
+        Whether the popup should open when the cursor enters a GeoJSON feature.
+
+    popup_close_on_hoverout : bool, default=False
+        Whether the popup should close when the cursor leaves a GeoJSON feature.
+
+    events : dict[str, str], default={}
+        Browser events emitted by GeoJSON features. Event keys must be
+        supported CartoLeaf events such as click, hoverin, or hoverout.
+
+    geojson_id : str, default=auto-generated
+        Unique ID for the GeoJSON layer. If not provided, one is automatically
+        generated.
+
+    style : dict[str, Any], default=POLYGEO_DEFAULT_STYLE
+        Leaflet path style options applied to the GeoJSON layer, such as color,
+        fillColor, fillOpacity, opacity, and weight.
+
+    Raises
+    ------
+    ValueError
+        If data is not a valid GeoJSON Feature or FeatureCollection, or if
+        unsupported events are provided.
+
+    TypeError
+        If popup_field or hover options are not the expected types.
+    """
     data: dict[str, Any]
     popup_field: str | None = None
 

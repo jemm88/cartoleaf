@@ -8,6 +8,63 @@ SUPPORTED_POLYGON_EVENTS = SUPPORTED_EVENTS
 
 @dataclass
 class Polygon:
+    """
+    Represents a polygon overlay on a CartoLeaf map.
+
+    Polygon is used to draw a custom area using a list of latitude and
+    longitude coordinate pairs. It supports styling, plain text popups,
+    HTML popups, hover popup behavior, custom browser events, and custom
+    metadata.
+
+    Parameters
+    ----------
+    coordinates : list[tuple[float, float]]
+        List of polygon points as (lat, lng) tuples. A polygon requires at
+        least three coordinate points. Latitude values must be between -90
+        and 90. Longitude values must be between -180 and 180.
+
+    popup : str | None, default=None
+        Plain text popup content shown when the polygon is clicked.
+
+    popup_html : str | None, default=None
+        HTML popup content shown when the polygon is clicked.
+        Use either popup or popup_html, not both.
+
+    popup_options : dict[str, Any], default={}
+        Reserved for future popup configuration support.
+
+    popup_open_on_hover : bool, default=False
+        Whether the popup should open when the cursor enters the polygon.
+
+    popup_close_on_hoverout : bool, default=False
+        Whether the popup should close when the cursor leaves the polygon.
+
+    data : dict[str, Any], default={}
+        Custom metadata attached to the polygon. This is included in emitted
+        browser events.
+
+    events : dict[str, str], default={}
+        Browser events emitted by the polygon. Event keys must be supported
+        CartoLeaf events such as click, hoverin, or hoverout.
+
+    polygon_id : str, default=auto-generated
+        Unique ID for the polygon. If not provided, one is automatically
+        generated.
+
+    style : dict[str, Any], default=POLYGEO_DEFAULT_STYLE
+        Leaflet path style options applied to the polygon, such as color,
+        fillColor, fillOpacity, opacity, and weight.
+
+    Raises
+    ------
+    ValueError
+        If fewer than three coordinates are provided, coordinate values are
+        invalid, both popup and popup_html are provided, or unsupported events
+        are used.
+
+    TypeError
+        If popup_html is provided but is not a string.
+    """
     coordinates: list[tuple[float, float]]
     popup: str | None = None
     popup_html: str | None = None
@@ -37,6 +94,15 @@ class Polygon:
 
         if self.popup_html is not None and not isinstance(self.popup_html, str):
             raise TypeError("popup_html must be a string.")
+        
+        if not isinstance(self.popup_options, dict):
+            raise TypeError("popup_options must be a dictionary.")
+
+        if not isinstance(self.popup_open_on_hover, bool):
+            raise TypeError("popup_open_on_hover must be a boolean.")
+
+        if not isinstance(self.popup_close_on_hoverout, bool):
+            raise TypeError("popup_close_on_hoverout must be a boolean.")
 
         invalid_events = set(self.events) - SUPPORTED_POLYGON_EVENTS
 

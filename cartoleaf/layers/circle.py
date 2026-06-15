@@ -9,6 +9,64 @@ SUPPORTED_CIRCLE_EVENTS = SUPPORTED_EVENTS
 
 @dataclass
 class Circle:
+    """
+    Represents a circular area overlay on a CartoLeaf map.
+
+    Circle is used to draw a radius-based area around a latitude and
+    longitude coordinate. The radius is measured in meters, following
+    Leaflet's circle behavior.
+
+    Parameters
+    ----------
+    lat : float
+        Latitude of the circle center. Must be between -90 and 90.
+
+    lng : float
+        Longitude of the circle center. Must be between -180 and 180.
+
+    radius : float
+        Radius of the circle in meters. Must be greater than 0.
+
+    popup : str | None, default=None
+        Plain text popup content shown when the circle is clicked.
+
+    popup_html : str | None, default=None
+        HTML popup content shown when the circle is clicked.
+        Use either popup or popup_html, not both.
+
+    popup_options : dict[str, Any], default={}
+        Reserved for future popup configuration support.
+
+    popup_open_on_hover : bool, default=False
+        Whether the popup should open when the cursor enters the circle.
+
+    popup_close_on_hoverout : bool, default=False
+        Whether the popup should close when the cursor leaves the circle.
+
+    data : dict[str, Any], default={}
+        Custom metadata attached to the circle. This is included in emitted
+        browser events.
+
+    events : dict[str, str], default={}
+        Browser events emitted by the circle. Event keys must be supported
+        CartoLeaf events such as click, hoverin, or hoverout.
+
+    circle_id : str, default=auto-generated
+        Unique ID for the circle. If not provided, one is automatically
+        generated.
+
+    style : dict[str, Any], default=POLYGEO_DEFAULT_STYLE
+        Leaflet circle style options, such as color, fillColor, fillOpacity,
+        opacity, and weight.
+
+    Raises
+    ------
+    ValueError
+        If lat, lng, radius, popup configuration, or events are invalid.
+
+    TypeError
+        If popup_html is provided but is not a string.
+    """
     lat: float
     lng: float
     radius: float
