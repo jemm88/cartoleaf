@@ -9,6 +9,7 @@ Unlike tools that render maps inside an iframe, CartoLeaf generates HTML and Jav
 [![PyPI version](https://img.shields.io/pypi/v/cartoleaf.svg)](https://pypi.org/project/cartoleaf/)
 [![Python versions](https://img.shields.io/pypi/pyversions/cartoleaf.svg)](https://pypi.org/project/cartoleaf/)
 [![License](https://img.shields.io/pypi/l/cartoleaf.svg)](https://pypi.org/project/cartoleaf/)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://jemm88.github.io/cartoleaf/)
 
 ## Why CartoLeaf?
 
@@ -106,6 +107,12 @@ m.save("map.html")
 ```
 
 Open `map.html` in your browser to view the generated map.
+
+## Documentation
+
+Read the full documentation here:
+
+[CartoLeaf Documentation](https://jemm88.github.io/cartoleaf/)
 
 ## Basic Usage
 

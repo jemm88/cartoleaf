@@ -39,6 +39,8 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/jemm88/cartoleaf"
+Documentation = "https://jemm88.github.io/cartoleaf/"
+Repository = "https://github.com/jemm88/cartoleaf"
 Issues = "https://github.com/jemm88/cartoleaf/issues"
 
 
