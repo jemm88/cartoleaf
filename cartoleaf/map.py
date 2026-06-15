@@ -55,31 +55,36 @@ class Map:
 
     def add_marker(self, marker: Marker) -> None:
         self.markers.append(marker)
+        return marker
 
     def add_markers(self, markers: list[Marker]) -> None:
         self.markers.extend(markers)
 
     def add_polygon(self, polygon: Polygon) -> None:
         self.polygons.append(polygon)
+        return polygon
 
     def add_polygons(self, polygons: list[Polygon]) -> None:
         self.polygons.extend(polygons)
 
     def add_circle(self, circle: Circle) -> None:
         self.circles.append(circle)
+        return circle
 
     def add_circles(self, circles: list[Circle]) -> None:
         self.circles.extend(circles)
 
     def add_geojson(self, geojson: GeoJson) -> None:
         self.geojson_layers.append(geojson)
+        return geojson
 
     def add_geojsons(self, geojson_layers: list[GeoJson]) -> None:
         self.geojson_layers.extend(geojson_layers)
 
     def add_polyline(self, polyline: Polyline) -> None:
         self.polylines.append(polyline)
-
+        return polyline
+    
     def add_polylines(self, polylines: list[Polyline]) -> None:
         self.polylines.extend(polylines)
 
