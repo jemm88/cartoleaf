@@ -1,0 +1,66 @@
+site_name: CartoLeaf
+site_description: Generate interactive Leaflet maps from Python.
+site_url: https://jemm88.github.io/cartoleaf/
+repo_url: https://github.com/jemm88/cartoleaf
+repo_name: jemm88/cartoleaf
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - Core:
+      - Map: map.md
+      - Markers: markers.md
+      - Custom Icons: custom-icons.md
+      - Circles: circles.md
+      - Polygons: polygons.md
+      - Polylines: polylines.md
+      - GeoJSON: geojson.md
+  - Guides:
+      - Layer Styling: layer-styling.md
+      - Events: events.md
+      - Popups: popups.md
+      - Rendering: rendering.md
+      - Web Frameworks: web-frameworks.md
+  - API Reference: api-reference.md
