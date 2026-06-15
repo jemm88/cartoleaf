@@ -6,6 +6,10 @@ It is designed for developers who want the convenience of defining maps in Pytho
 
 Unlike tools that render maps inside an iframe, CartoLeaf generates HTML and JavaScript that can interact directly with the page. Map objects can emit browser events, expose layer references, and communicate with other DOM elements.
 
+[![PyPI version](https://img.shields.io/pypi/v/cartoleaf.svg)](https://pypi.org/project/cartoleaf/)
+[![Python versions](https://img.shields.io/pypi/pyversions/cartoleaf.svg)](https://pypi.org/project/cartoleaf/)
+[![License](https://img.shields.io/pypi/l/cartoleaf.svg)](https://pypi.org/project/cartoleaf/)
+
 ## Why CartoLeaf?
 
 CartoLeaf is built for cases where you want more control over how a Python-generated map interacts with the rest of your web application.

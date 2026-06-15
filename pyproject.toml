@@ -7,7 +7,16 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["jinja2>=3.1.0"]
 license = {text = "MIT"}
-keywords = ["leaflet", "maps", "gis", "python"]
+keywords = [
+    "leaflet",
+    "maps",
+    "mapping",
+    "geojson",
+    "python",
+    "html",
+    "javascript",
+    "dom"
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: MIT License",
@@ -15,6 +24,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [build-system]
@@ -25,3 +36,15 @@ build-backend = "setuptools.build_meta"
 dev = [
     "pytest>=8.0.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/jemm88/cartoleaf"
+Issues = "https://github.com/jemm88/cartoleaf/issues"
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cartoleaf*"]
+
+[tool.setuptools.package-data]
+cartoleaf = ["templates/*.html"]
