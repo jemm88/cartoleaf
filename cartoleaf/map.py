@@ -6,6 +6,7 @@ from .layers.marker import Marker
 from .layers.polygon import Polygon
 from .layers.geojson import GeoJson
 from .layers.circle import Circle
+from .layers.polyline import Polyline
 
 from .templates.dependencies import HTML_DEPENDENCIES
 from .templates.container import HTML_MAP
@@ -49,6 +50,7 @@ class Map:
         self.polygons: list[Polygon] = []
         self.geojson_layers: list[GeoJson] = []
         self.circles: list[Circle] = []
+        self.polylines: list[Polyline] = []
 
 
     def add_marker(self, marker: Marker) -> None:
@@ -74,6 +76,12 @@ class Map:
 
     def add_geojsons(self, geojson_layers: list[GeoJson]) -> None:
         self.geojson_layers.extend(geojson_layers)
+
+    def add_polyline(self, polyline: Polyline) -> None:
+        self.polylines.append(polyline)
+
+    def add_polylines(self, polylines: list[Polyline]) -> None:
+        self.polylines.extend(polylines)
 
     @property
     def default_popup_options_json(self) -> str:
@@ -182,6 +190,26 @@ class Map:
             prepared_circles.append(new_circle)
 
 
+        prepared_polylines = []
+        for index, polyline in enumerate(self.polylines, start=1):
+            new_polyline = {
+                "var_name": f"polyline{index}",
+                "polyline_id": polyline.polyline_id,
+                "polyline_id_json": json.dumps(polyline.polyline_id),
+                "points_json": polyline.points_json,
+                "popup": polyline.popup,
+                "popup_json": json.dumps(polyline.popup),
+                "popup_html": polyline.popup_html,
+                "popup_html_json": json.dumps(polyline.popup_html),
+                "popup_open_on_hover": polyline.popup_open_on_hover,
+                "popup_close_on_hoverout": polyline.popup_close_on_hoverout,
+                "data_json": json.dumps(polyline.data),
+                "events": polyline.events,
+                "style_json": json.dumps(polyline.style),
+            }
+            prepared_polylines.append(new_polyline)
+
+
         prepared_geojson_layers = []
 
         for index, geojson in enumerate(self.geojson_layers, start=1):
@@ -217,6 +245,7 @@ class Map:
             "markers": prepared_markers,
             "circles": prepared_circles,
             "polygons": prepared_polygons,
+            "polylines": prepared_polylines,
             "geojson_layers": prepared_geojson_layers,
             "include_bootstrap_icons": self.include_bootstrap_icons,
         }

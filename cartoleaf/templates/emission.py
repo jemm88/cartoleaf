@@ -107,6 +107,34 @@ HTML_EMISSION = """
     {% endfor %}
     {% endfor %}
 
+// Polyline events
+{% for polyline in polylines %}
+{% set polyline_index = loop.index %}
+const polylineObj{{ polyline_index }} = window.cartoleaf.polylines[{{ polyline.polyline_id_json | safe }}];
+
+{% for event_name, emitted_event in polyline.events.items() %}
+if (eventAliases[{{ event_name | tojson }}]) {
+  polylineObj{{ polyline_index }}.on(
+    eventAliases[{{ event_name | tojson }}],
+    function (e) {
+
+      emitCartoleafEvent(
+        {{ emitted_event | tojson }},
+        {{ polyline.polyline_id_json | safe }},
+        {{ event_name | tojson }},
+        {
+          type: "polyline",
+          id: {{ polyline.polyline_id_json | safe }},
+          points: {{ polyline.points_json | safe }},
+          data: {{ polyline.data_json | safe }}
+        }
+      );
+    }
+  );
+}
+{% endfor %}
+{% endfor %}
+
 
   // GeoJSON events
   {% for geojson in geojson_layers %}

@@ -15,6 +15,7 @@ window.cartoleaf.markers = window.cartoleaf.markers || {};
 window.cartoleaf.circles = window.cartoleaf.circles || {};
 window.cartoleaf.polygons = window.cartoleaf.polygons || {};
 window.cartoleaf.geojsonLayers = window.cartoleaf.geojsonLayers || {};
+window.cartoleaf.polylines = window.cartoleaf.polylines || {};
 
 //Marker rendering
   {% for marker in markers %}
@@ -122,6 +123,41 @@ window.cartoleaf.geojsonLayers = window.cartoleaf.geojsonLayers || {};
     {% endif %}
 
   {% endfor %}
+
+
+// Polyline rendering
+{% for polyline in polylines %}
+const polyline{{ loop.index }} = L.polyline(
+  {{ polyline.points_json | safe }},
+  {{ polyline.style_json | safe }}
+).addTo(map);
+
+{% if polyline.popup %}
+polyline{{ loop.index }}.bindPopup({{ polyline.popup_json | safe }});
+{% endif %}
+
+{% if polyline.popup_html %}
+polyline{{ loop.index }}.bindPopup({{ polyline.popup_html_json | safe }});
+{% endif %}
+
+{% if polyline.popup or polyline.popup_html %}
+  {% if polyline.popup_open_on_hover %}
+  polyline{{ loop.index }}.on("mouseover", function () {
+    this.openPopup();
+  });
+  {% endif %}
+
+  {% if polyline.popup_close_on_hoverout %}
+  polyline{{ loop.index }}.on("mouseout", function () {
+    this.closePopup();
+  });
+  {% endif %}
+{% endif %}
+
+window.cartoleaf.polylines[{{ polyline.polyline_id_json | safe }}] = polyline{{ loop.index }};
+{% endfor %}
+
+
 
 //GeoJSON rendering
 {% for geojson in geojson_layers %}
