@@ -68,64 +68,40 @@ def custom_pin_icon(
 
     content = inner_html if inner_html is not None else inner_text
 
+    # Instance-varying properties are set inline on each element so that
+    # markers with the same ``name_type`` but different colors/sizes do not
+    # collide on a shared class selector (last-rule-wins). Only non-varying
+    # structural CSS lives in the class-scoped <style> block below. SVG path
+    # fill uses ``currentColor`` so it inherits the inline ``color``.
+    pin_style = (
+        f"position: absolute; left: 50%; bottom: 0; "
+        f"width: {icon_wh}px; height: {icon_wh}px; "
+        f"background: {background_color}; color: {text_color}; "
+        f"border-radius: 50% 50% 50% 0; "
+        f"transform: translateX(-50%) rotate(-45deg); "
+        f"transform-origin: center center; "
+        f"display: flex; align-items: center; justify-content: center; "
+        f"box-shadow: 0 0 2px #555; cursor: pointer; box-sizing: border-box;"
+    )
+
     if inner_circle:
-        span_css = f"""
-        .{pin_class} span {{
-            width: {inner_wh}%;
-            height: {inner_wh}%;
-            border-radius: 50%;
-            background: {inner_bg};
-            color: {text_color};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform: rotate(45deg);
-            font-size: {font_size}px;
-            font-weight: {font_weight};
-        }}
-        """
+        span_style = (
+            f"width: {inner_wh}%; height: {inner_wh}%; border-radius: 50%; "
+            f"background: {inner_bg}; color: {text_color}; "
+            f"display: flex; align-items: center; justify-content: center; "
+            f"transform: rotate(45deg); "
+            f"font-size: {font_size}px; font-weight: {font_weight};"
+        )
     else:
-        span_css = f"""
-        .{pin_class} span {{
-            transform: rotate(45deg);
-            font-size: {font_size}px;
-            font-weight: {font_weight};
-            color: {text_color};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }}
-        """
+        span_style = (
+            f"transform: rotate(45deg); "
+            f"font-size: {font_size}px; font-weight: {font_weight}; "
+            f"color: {text_color}; "
+            f"display: flex; align-items: center; justify-content: center;"
+        )
 
     html = f"""
     <style>
-        .{css_class} {{
-            width: {icon_wh}px;
-            height: {icon_wh}px;
-            position: relative;
-        }}
-
-        .{pin_class} {{
-            position: absolute;
-            left: 50%;
-            bottom: 0;
-            width: {icon_wh}px;
-            height: {icon_wh}px;
-            background: {background_color};
-            color: {text_color};
-            border-radius: 50% 50% 50% 0;
-            transform: translateX(-50%) rotate(-45deg);
-            transform-origin: center center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 2px #555;
-            cursor: pointer;
-            box-sizing: border-box;
-        }}
-
-        {span_css}
-
         .{pin_class} span svg {{
             width: 70%;
             height: 70%;
@@ -133,13 +109,13 @@ def custom_pin_icon(
         }}
 
         .{pin_class} span svg path {{
-            fill: {text_color};
+            fill: currentColor;
         }}
     </style>
 
-    <div class="{css_class}">
-        <div class="{pin_class}">
-            <span>{content}</span>
+    <div class="{css_class}" style="width: {icon_wh}px; height: {icon_wh}px; position: relative;">
+        <div class="{pin_class}" style="{pin_style}">
+            <span style="{span_style}">{content}</span>
         </div>
     </div>
     """

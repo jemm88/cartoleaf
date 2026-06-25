@@ -1,6 +1,6 @@
 [project]
 name = "cartoleaf"
-version = "0.1.0"
+version = "0.1.1"
 description = "Generate Leaflet maps from Python with browser event emission."
 authors = [{ name = "Jeremy Seow" }]
 readme = "README.md"

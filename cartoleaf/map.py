@@ -255,7 +255,7 @@ class Map:
                 "var_name": f"polyline{index}",
                 "polyline_id": polyline.polyline_id,
                 "polyline_id_json": json.dumps(polyline.polyline_id),
-                "points_json": polyline.points_json,
+                "points_json": json.dumps(polyline.points),
                 "popup": polyline.popup,
                 "popup_json": json.dumps(polyline.popup),
                 "popup_html": polyline.popup_html,
