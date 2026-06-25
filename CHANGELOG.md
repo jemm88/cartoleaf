@@ -4,6 +4,12 @@
 
 ### Added
 
+- New optional `Map` settings `min_zoom` (minimum zoom level the user can zoom
+  out to) and `max_bounds` (geographic bounds, as `((south, west),
+  (north, east))`, that the map cannot be panned outside of), plus
+  `max_bounds_viscosity` to control how hard the bounds feel. These map to
+  Leaflet's `minZoom`, `maxBounds`, and `maxBoundsViscosity` options.
+
 - The Leaflet map instance is now exposed at `window.cartoleaf.maps[map_id]`
   when a map is generated. This makes cartoleaf safe to re-render into the same
   container (for example on an htmx swap): each rendered script tears down any

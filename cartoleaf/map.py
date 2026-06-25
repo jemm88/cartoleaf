@@ -33,6 +33,21 @@ class Map:
     max_zoom : int, default=19
         Maximum zoom level for the tile layer.
 
+    min_zoom : int | None, default=None
+        Minimum zoom level the user is allowed to zoom out to. When ``None``
+        Leaflet's default (no explicit minimum) is used.
+
+    max_bounds : tuple[tuple[float, float], tuple[float, float]] | None, default=None
+        Optional geographic bounds the map cannot be panned outside of, given
+        as two ``(lat, lng)`` corners ``((south, west), (north, east))``. This
+        prevents, for example, scrolling from Singapore all the way to Tokyo.
+        When ``None`` the map can be panned freely.
+
+    max_bounds_viscosity : float, default=1.0
+        How solid ``max_bounds`` feels when dragging against it, from ``0.0``
+        (no resistance, bounces back) to ``1.0`` (a hard, immovable edge). Only
+        applies when ``max_bounds`` is set.
+
     map_id : str, default="cartoleaf-map"
         HTML element ID used for the map container.
 
@@ -79,12 +94,15 @@ class Map:
         center: tuple[float, float] = (1.3521, 103.8198),
         zoom: int = 12,
         max_zoom: int = 19,
+        min_zoom: int | None = None,
         map_id: str = "cartoleaf-map",
         height: str = "500px",
         fit_bounds: bool = False,
         fit_bounds_padding: tuple[int, int] = (30, 30),
+        max_bounds: tuple[tuple[float, float], tuple[float, float]] | None = None,
+        max_bounds_viscosity: float = 1.0,
         allow_multiple_popups: bool = False,
-        
+
         tile_url: str = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attribution: str = '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         include_bootstrap_icons: bool = False,
@@ -94,10 +112,13 @@ class Map:
         self.center = center
         self.zoom = zoom
         self.max_zoom = max_zoom
+        self.min_zoom = min_zoom
         self.map_id = map_id
         self.height = height
         self.fit_bounds = fit_bounds
         self.fit_bounds_padding = fit_bounds_padding
+        self.max_bounds = max_bounds
+        self.max_bounds_viscosity = max_bounds_viscosity
         self.allow_multiple_popups = allow_multiple_popups
         
         self.tile_url = tile_url
@@ -161,6 +182,14 @@ class Map:
 
         if self.allow_multiple_popups:
             options["closePopupOnClick"] = False
+
+        if self.min_zoom is not None:
+            options["minZoom"] = self.min_zoom
+
+        if self.max_bounds is not None:
+            southwest, northeast = self.max_bounds
+            options["maxBounds"] = [list(southwest), list(northeast)]
+            options["maxBoundsViscosity"] = self.max_bounds_viscosity
 
         return json.dumps(options)
 
