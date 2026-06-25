@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.2
+
+### Added
+
+- The Leaflet map instance is now exposed at `window.cartoleaf.maps[map_id]`
+  when a map is generated. This makes cartoleaf safe to re-render into the same
+  container (for example on an htmx swap): each rendered script tears down any
+  existing map on the same `map_id` via `map.remove()` before creating the new
+  one, so the old instance is no longer orphaned.
+- Each map now carries its own per-map layer registries
+  (`map.markers`, `map.circles`, `map.polygons`, `map.polylines`,
+  `map.geojsonLayers`) in addition to the existing global `window.cartoleaf.*`
+  registries. On teardown the dead map's entries are pruned from the global
+  registries so they no longer leak.
+- On every render the generated script now also prunes any previously-rendered
+  map whose container has left the DOM (for example one replaced by an htmx
+  swap), calling `map.remove()` on it and dropping it from
+  `window.cartoleaf.maps`. This keeps the registry bounded when rendering maps
+  with unique ids — the recommended pattern for swapping maps under htmx, since
+  reusing a single fixed `map_id` across a swap can race the outgoing and
+  incoming containers and leave the map mis-rendered.
+
 ## 0.1.1
 
 ### Added

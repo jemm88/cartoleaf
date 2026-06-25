@@ -1,21 +1,70 @@
 HTML_SCRIPT = """
 <script>
 (function () {
-  const map = L.map("{{ map_id }}", {{ map_options_json | safe }}).setView([{{ center_lat }}, {{ center_lng }}], {{ zoom }});
+
+// Initialize global storage for maps, markers, polygons, and geojson layers
+window.cartoleaf = window.cartoleaf || {};
+window.cartoleaf.maps = window.cartoleaf.maps || {};
+window.cartoleaf.markers = window.cartoleaf.markers || {};
+window.cartoleaf.circles = window.cartoleaf.circles || {};
+window.cartoleaf.polygons = window.cartoleaf.polygons || {};
+window.cartoleaf.geojsonLayers = window.cartoleaf.geojsonLayers || {};
+window.cartoleaf.polylines = window.cartoleaf.polylines || {};
+
+  const cartoleafMapId = "{{ map_id }}";
+
+  // Remove a previously-rendered map and prune all of its layer references from
+  // the global registries, so nothing leaks once it (and its layers) are gone.
+  function cartoleafDestroyMap(deadMap) {
+    for (const id in (deadMap.markers || {})) { delete window.cartoleaf.markers[id]; }
+    for (const id in (deadMap.circles || {})) { delete window.cartoleaf.circles[id]; }
+    for (const id in (deadMap.polygons || {})) { delete window.cartoleaf.polygons[id]; }
+    for (const id in (deadMap.polylines || {})) { delete window.cartoleaf.polylines[id]; }
+    for (const id in (deadMap.geojsonLayers || {})) { delete window.cartoleaf.geojsonLayers[id]; }
+    // The container may already be detached (e.g. an htmx swap removed it), in
+    // which case remove() can throw — never let that abort the new map build.
+    try { deadMap.remove(); } catch (cartoleafRemoveError) {}
+  }
+
+  // If a map was previously rendered under this same id, tear it down first so a
+  // new one can be created safely on the same container (a stable-id re-render).
+  if (window.cartoleaf.maps[cartoleafMapId]) {
+    cartoleafDestroyMap(window.cartoleaf.maps[cartoleafMapId]);
+    delete window.cartoleaf.maps[cartoleafMapId];
+  }
+
+  const map = L.map(cartoleafMapId, {{ map_options_json | safe }}).setView([{{ center_lat }}, {{ center_lng }}], {{ zoom }});
+
+  // Expose the map and give it its own per-map layer registries so the layers it
+  // owns can be looked up (and pruned on teardown) independently of other maps
+  // sharing the same global registries.
+  window.cartoleaf.maps[cartoleafMapId] = map;
+  map.markers = {};
+  map.circles = {};
+  map.polygons = {};
+  map.polylines = {};
+  map.geojsonLayers = {};
+
+  // Prune any previously-rendered maps whose container has since been removed
+  // from the document (for example replaced by an htmx swap). This frees the
+  // dead Leaflet instances and keeps the registry from growing without bound
+  // when maps are rendered with unique ids — the recommended pattern for swaps,
+  // since reusing one id across an htmx swap can race the old/new containers.
+  for (const cartoleafOtherId in window.cartoleaf.maps) {
+    const cartoleafOther = window.cartoleaf.maps[cartoleafOtherId];
+    if (cartoleafOther && cartoleafOther !== map &&
+        (!cartoleafOther._container || !document.body.contains(cartoleafOther._container))) {
+      cartoleafDestroyMap(cartoleafOther);
+      delete window.cartoleaf.maps[cartoleafOtherId];
+    }
+  }
+
   const cartoleafDefaultPopupOptions = {{ default_popup_options_json | safe }};
 
   L.tileLayer("{{ tile_url }}", {
     maxZoom: {{ max_zoom }},
     attribution: {{ attribution | safe }}
   }).addTo(map);
-
-// Initialize global storage for markers, polygons, and geojson layers
-window.cartoleaf = window.cartoleaf || {};
-window.cartoleaf.markers = window.cartoleaf.markers || {};
-window.cartoleaf.circles = window.cartoleaf.circles || {};
-window.cartoleaf.polygons = window.cartoleaf.polygons || {};
-window.cartoleaf.geojsonLayers = window.cartoleaf.geojsonLayers || {};
-window.cartoleaf.polylines = window.cartoleaf.polylines || {};
 
 //Marker rendering
   {% for marker in markers %}
@@ -39,6 +88,7 @@ window.cartoleaf.polylines = window.cartoleaf.polylines || {};
   {% endif %}
 
   window.cartoleaf.markers[{{ marker.marker_id_json | safe }}] = {{ marker.var_name }};
+  map.markers[{{ marker.marker_id_json | safe }}] = {{ marker.var_name }};
 
   //Marker popup binding
     {% if marker.popup_html %}
@@ -87,6 +137,7 @@ window.cartoleaf.polylines = window.cartoleaf.polylines || {};
   ).addTo(map);
 
   window.cartoleaf.polygons[{{ polygon.polygon_id_json | safe }}] = {{ polygon.var_name }};
+  map.polygons[{{ polygon.polygon_id_json | safe }}] = {{ polygon.var_name }};
 
   //Polygon popup binding
     {% if polygon.popup_html %}
@@ -155,6 +206,7 @@ polyline{{ loop.index }}.bindPopup({{ polyline.popup_html_json | safe }});
 {% endif %}
 
 window.cartoleaf.polylines[{{ polyline.polyline_id_json | safe }}] = polyline{{ loop.index }};
+map.polylines[{{ polyline.polyline_id_json | safe }}] = polyline{{ loop.index }};
 {% endfor %}
 
 
@@ -197,6 +249,7 @@ const {{ geojson.var_name }} = L.geoJSON(
 ).addTo(map);
 
 window.cartoleaf.geojsonLayers[{{ geojson.geojson_id_json | safe }}] = {{ geojson.var_name }};
+map.geojsonLayers[{{ geojson.geojson_id_json | safe }}] = {{ geojson.var_name }};
 
 {% endfor %}
 
@@ -212,6 +265,7 @@ const {{ circle.var_name }} = L.circle(
 ).addTo(map);
 
 window.cartoleaf.circles[{{ circle.circle_id_json | safe }}] = {{ circle.var_name }};
+map.circles[{{ circle.circle_id_json | safe }}] = {{ circle.var_name }};
 
   //circle popup binding
     {% if circle.popup_html %}
@@ -286,6 +340,17 @@ if (cartoleafBounds.length > 0) {
   });
 }
 {% endif %}
+
+  // Recalculate the map size once the container has settled in the DOM. When the
+  // map is initialized into a container that was just inserted or resized (for
+  // example on an htmx swap), Leaflet may cache an incorrect size, leaving tiles
+  // and overlays misaligned. invalidateSize() recomputes it and repositions
+  // everything. Deferred to the next frame so layout is final when it runs.
+  if (typeof requestAnimationFrame === "function") {
+    requestAnimationFrame(function () { map.invalidateSize(false); });
+  } else {
+    setTimeout(function () { map.invalidateSize(false); }, 0);
+  }
 
 })();
 </script>
